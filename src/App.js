@@ -8,6 +8,13 @@ const getCameraModel = gql`
     works {
       filename
       imageWidth
+      urls {
+        link
+      }
+      exif {
+        make
+        model
+      }
     }
   }
 `;
@@ -24,12 +31,12 @@ function App() {
             <div className="row">
               {data.works.map((camera, i) => (
                 <div key={i}>
-                  <h3>{camera.imageWidth}</h3>
+                  <h3>{camera.exif.model}</h3>
                   <img
-                    src={camera.filename}
+                    src={camera.urls[0].link}
                     className="card-img-top"
                     style={{ height: "10em" }}
-                    alt="camera image"
+                    alt={`${camera.exif.make} - ${camera.exif.model}`}
                   />
                 </div>
               ))}
