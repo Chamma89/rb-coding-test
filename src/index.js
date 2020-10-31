@@ -3,12 +3,13 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import ApolloClient from "apollo-boost";
+import { ApolloProvider } from "react-apollo";
 import { gql } from "@apollo/client";
 
 const client = new ApolloClient({
   uri: "https://take-home-test-gql.herokuapp.com/query",
-  cache: new InMemoryCache(),
+  // cache: new InMemoryCache(),
 });
 
 client
@@ -37,9 +38,9 @@ client
   .then((result) => console.log(result));
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <ApolloProvider client={client}>
+    <App key={8} />
+  </ApolloProvider>,
   document.getElementById("root")
 );
 
