@@ -19,6 +19,17 @@ client
           filename
           imageWidth
           imageHeight
+          urls {
+            type
+            link
+          }
+          exif {
+            model
+            software
+            isoSpeedRatings
+            dateTime
+            make
+          }
         }
       }
     `,
