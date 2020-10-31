@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Query } from "react-apollo";
 import { gql } from "apollo-boost";
 import "./App.css";
+import "bootstrap/dist/css/bootstrap.css";
 
-const getCameraModel = gql`
+const getCamera = gql`
   {
     works {
       filename
@@ -21,7 +22,7 @@ const getCameraModel = gql`
 
 function App() {
   return (
-    <Query query={getCameraModel}>
+    <Query query={getCamera}>
       {({ loading, error, data }) => {
         if (loading) return <p>Loading...</p>;
         if (error) return <p>There seems to be an error...</p>;
@@ -32,7 +33,7 @@ function App() {
               {data.works.map((camera, i) => (
                 <div key={i}>
                   {!!camera.exif.model ? (
-                    <h3>{`${camera.exif.make} - ${camera.exif.model}`}</h3>
+                    <h3 className="d-none">{`${camera.exif.make} - ${camera.exif.model}`}</h3>
                   ) : (
                     <h3>Unkown model</h3>
                   )}
