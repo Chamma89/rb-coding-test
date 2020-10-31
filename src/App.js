@@ -31,7 +31,11 @@ function App() {
             <div className="row">
               {data.works.map((camera, i) => (
                 <div key={i}>
-                  <h3>{camera.exif.model}</h3>
+                  {!!camera.exif.model ? (
+                    <h3>{`${camera.exif.make} - ${camera.exif.model}`}</h3>
+                  ) : (
+                    <h3>Unkown model</h3>
+                  )}
                   <img
                     src={camera.urls[0].link}
                     className="card-img-top"
