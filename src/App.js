@@ -20,7 +20,15 @@ function App() {
         query: Constants.GET_IMAGES_QUERY,
       },
     }).then((result) => {
-      console.log(result.data.data);
+      result.data.data.works.map((item) => {
+        if (item.exif.model === "") {
+          item.exif.model = "Unknown model";
+        }
+
+        if (item.exif.make === "") {
+          item.exif.make = "Unknown make";
+        }
+      });
       setImagesData({ works: result.data.data.works });
     });
   }, []);
@@ -49,11 +57,7 @@ function App() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.currentTarget.value)}
         />
-        <div className="row">
-          {searchResults.map((item, i) => (
-            <PhotosList key={i} item={item} />
-          ))}
-        </div>
+        <PhotosList photos={searchResults} />
       </div>
     </div>
   );
