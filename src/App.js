@@ -1,35 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { Query } from "react-apollo";
-import { gql } from "apollo-boost";
-import Photographs from "./components/Photographs";
+import Photograph from "./components/Photograph";
+import axios from "axios";
+import * as Constants from "./Constants";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.css";
 
-const getPhotoData = gql`
-  {
-    works {
-      filename
-      imageWidth
-      urls {
-        link
-      }
-      exif {
-        make
-        model
-      }
-    }
-  }
-`;
-
 function App() {
+  const [imagesData, setImagesData] = useState({ works: [] });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const queryResult = await axios.post(Constants.GRAPHQL_API, {
+        query: Constants.GET_IMAGES_QUERY,
+      });
+      const result = queryResult.data.data;
+      setImagesData({ works: result.works });
+    };
+    fetchData();
+  }, []);
+
   return (
-    <Query query={getPhotoData}>
-      {({ loading, error, data }) => {
-        if (loading) return <p>Loading...</p>;
-        if (error) return <p>There seems to be an error...</p>;
-        return <Photographs getPhotoData={data} />;
-      }}
-    </Query>
+    <div>
+      <h1 className="text-center mb-5">RB Cameras</h1>
+      <div className="container">
+        <div className="row">
+          {imagesData.works.map((item, i) => (
+            <Photograph key={i} item={item} />
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
