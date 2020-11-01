@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Photograph from "./components/Photograph";
+import PhotosList from "./components/PhotosList";
 import axios from "axios";
 import * as Constants from "./Constants";
 import "./App.css";
@@ -11,25 +11,31 @@ function App() {
   const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const queryResult = await axios.post(Constants.GRAPHQL_API, {
+    const axios = require("axios");
+
+    axios({
+      url: Constants.GRAPHQL_API,
+      method: "post",
+      data: {
         query: Constants.GET_IMAGES_QUERY,
-      });
-      const result = queryResult.data.data;
-      setImagesData({ works: result.works });
-    };
-    fetchData();
+      },
+    }).then((result) => {
+      console.log(result.data.data);
+      setImagesData({ works: result.data.data.works });
+    });
   }, []);
 
   useEffect(() => {
-    const searchResults = imagesData.works.filter((image) =>
-      image.exif.model.toLowerCase().includes(searchTerm)
+    const results = imagesData.works.filter(
+      (image) =>
+        image.exif.model
+          .toLowerCase()
+          .includes(searchTerm.toLocaleLowerCase()) ||
+        image.exif.make.toLowerCase().includes(searchTerm.toLocaleLowerCase())
     );
-    console.log(imagesData);
-    console.log(searchTerm);
-    console.log(searchResults);
-    setSearchResults({ searchResults: searchResults });
-  }, [searchTerm]);
+
+    setSearchResults(results);
+  }, [searchTerm, imagesData]);
 
   return (
     <div>
@@ -44,8 +50,8 @@ function App() {
           onChange={(e) => setSearchTerm(e.currentTarget.value)}
         />
         <div className="row">
-          {imagesData.works.map((item, i) => (
-            <Photograph key={i} item={item} />
+          {searchResults.map((item, i) => (
+            <PhotosList key={i} item={item} />
           ))}
         </div>
       </div>

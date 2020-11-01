@@ -1,6 +1,6 @@
 import React from "react";
 
-function Photograph(props) {
+function PhotosList(props) {
   return (
     <div className="col-12 col-md-4 w-100 text-center mb-5">
       {!!props.item.exif.model ? (
@@ -18,4 +18,4 @@ function Photograph(props) {
   );
 }
 
-export default Photograph;
+export default PhotosList;
