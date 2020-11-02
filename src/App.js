@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useQuery } from "react";
+import React, { useEffect, useState } from "react";
 import PhotosList from "./components/PhotosList";
 import axios from "axios";
 import * as Constants from "./Constants";
@@ -10,19 +10,19 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [fetchingData, setFetchingData] = useState(true);
+  const [noResultsFound, setNoResultsFound] = useState("");
 
   useEffect(() => {
-    const axios = require("axios");
-
-    axios({
-      url: Constants.GRAPHQL_API,
-      method: "post",
-      data: {
+    const fetchData = async () => {
+      const queryResult = await axios.post(Constants.GRAPHQL_API, {
         query: Constants.GET_IMAGES_QUERY,
-      },
-    }).then((result) => {
+      });
+
+      const result = queryResult.data.data;
+      setImagesData({ works: result.works });
       setFetchingData(false);
-      result.data.data.works.map((item) => {
+
+      result.works.map((item) => {
         if (item.exif.model === "") {
           item.exif.model = "Unknown model";
         }
@@ -31,8 +31,9 @@ function App() {
           item.exif.make = "Unknown make";
         }
       });
-      setImagesData({ works: result.data.data.works });
-    });
+      setImagesData({ works: result.works });
+    };
+    fetchData();
   }, [fetchingData]);
 
   useEffect(() => {
@@ -43,6 +44,10 @@ function App() {
           .includes(searchTerm.toLocaleLowerCase()) ||
         image.exif.make.toLowerCase().includes(searchTerm.toLocaleLowerCase())
     );
+
+    results.length == 0
+      ? setNoResultsFound("No results found")
+      : setNoResultsFound("");
 
     setSearchResults(results);
   }, [searchTerm, imagesData]);
@@ -61,6 +66,7 @@ function App() {
         onChange={(e) => setSearchTerm(e.currentTarget.value)}
       />
       {fetchingData ? "Loading..." : <PhotosList photos={searchResults} />}
+      <h3>{noResultsFound}</h3>
     </div>
   );
 }
