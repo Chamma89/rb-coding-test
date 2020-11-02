@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useQuery } from "react";
 import PhotosList from "./components/PhotosList";
 import axios from "axios";
 import * as Constants from "./Constants";
@@ -9,6 +9,7 @@ function App() {
   const [imagesData, setImagesData] = useState({ works: [] });
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [fetchingData, setFetchingData] = useState(true);
 
   useEffect(() => {
     const axios = require("axios");
@@ -20,6 +21,7 @@ function App() {
         query: Constants.GET_IMAGES_QUERY,
       },
     }).then((result) => {
+      setFetchingData(false);
       result.data.data.works.map((item) => {
         if (item.exif.model === "") {
           item.exif.model = "Unknown model";
@@ -31,7 +33,7 @@ function App() {
       });
       setImagesData({ works: result.data.data.works });
     });
-  }, []);
+  }, [fetchingData]);
 
   useEffect(() => {
     const results = imagesData.works.filter(
@@ -46,19 +48,19 @@ function App() {
   }, [searchTerm, imagesData]);
 
   return (
-    <div>
-      <h1 className="text-center mb-5">RB Cameras</h1>
-      <div className="container">
-        <input
-          autoFocus
-          type="text"
-          placeholder="Search"
-          className="mb-5 w-100 p-2"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.currentTarget.value)}
-        />
-        <PhotosList photos={searchResults} />
-      </div>
+    <div className="container">
+      <h1 className="text-center mb-5" aria-label="RB Cameras">
+        RB Cameras
+      </h1>
+      <input
+        autoFocus
+        type="text"
+        placeholder="Search"
+        className="mb-5 w-100 p-2"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.currentTarget.value)}
+      />
+      {fetchingData ? "Loading..." : <PhotosList photos={searchResults} />}
     </div>
   );
 }
