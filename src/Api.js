@@ -1,11 +1,13 @@
-import axios from "axios";
 import * as Constants from "./Constants";
 
 export const fetchData = async () => {
-  const queryResult = axios.post(Constants.GRAPHQL_API, {
-    query: Constants.GET_IMAGES_QUERY,
-  });
-  return await queryResult.data.data.works;
+  return fetch(Constants.GRAPHQL_API, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: Constants.GET_IMAGES_QUERY }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data.data);
+    });
 };
-
-fetchData("react");

@@ -1,28 +1,12 @@
-// import PhotoData from "./__mocks__/Api";
-import * as Constants from "./Constants";
-import axios from "axios";
-import { render, cleanup } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { MockedProvider } from "@apollo/client/testing";
 import App from "./App";
-import { get } from "enzyme/build/configuration";
 import { fetchData } from "./Api";
 
-afterEach(cleanup);
-jest.mock("axios");
-
-const mocks = [
-  {
-    request: {
-      query: Constants.GET_IMAGES_QUERY,
-    },
-    result: {
-      works: Constants.EXPECTED_RETURNED_JSON,
-    },
-  },
-];
+beforeAll(() => jest.spyOn(window, "fetch"));
 
 describe("fetchData", () => {
-  it("fetches data from an API", async () => {
+  it("Checks if Loading... is on page", async () => {
     const { getByText } = render(
       <MockedProvider>
         <App />
@@ -31,5 +15,13 @@ describe("fetchData", () => {
     expect(getByText("Loading...")).toBeInTheDocument();
   });
 
-  it("fetches successfully data from an API", async () => {});
+  it("fetches data from an API", async () => {
+    await fetchData();
+    window.fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ success: true }),
+    });
+  });
+
+  it("Api status returns 200", async () => {});
 });

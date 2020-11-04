@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PhotosList from "./components/PhotosList";
-import axios from "axios";
 import * as Constants from "./Constants";
+import axios from "axios";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.css";
 
@@ -35,7 +35,7 @@ function App() {
       setImagesData({ works: result.works });
     };
     fetchData();
-  }, [fetchingData]);
+  }, []);
 
   useEffect(() => {
     const results = imagesData.works.filter(
@@ -47,7 +47,7 @@ function App() {
     );
 
     if (!fetchingData) {
-      results.length == 0
+      results.length === 0
         ? setNoResultsFound("No results found")
         : setNoResultsFound("");
     }
