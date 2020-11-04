@@ -1,26 +1,35 @@
-import { render, screen } from "@testing-library/react";
+// import PhotoData from "./__mocks__/Api";
+import * as Constants from "./Constants";
+import axios from "axios";
+import { render, cleanup } from "@testing-library/react";
+import { MockedProvider } from "@apollo/client/testing";
 import App from "./App";
-import { shallow, mount } from "enzyme";
+import { get } from "enzyme/build/configuration";
+import { fetchData } from "./Api";
 
-// mount not working with React v17.0.1
+afterEach(cleanup);
+jest.mock("axios");
 
-describe("Testing", () => {
-  let wrapper;
+const mocks = [
+  {
+    request: {
+      query: Constants.GET_IMAGES_QUERY,
+    },
+    result: {
+      works: Constants.EXPECTED_RETURNED_JSON,
+    },
+  },
+];
 
-  beforeAll(() => {
-    //window.fetch = jest.fn(); if running browser environment
+describe("fetchData", () => {
+  it("fetches data from an API", async () => {
+    const { getByText } = render(
+      <MockedProvider>
+        <App />
+      </MockedProvider>
+    );
+    expect(getByText("Loading...")).toBeInTheDocument();
   });
 
-  beforeEach(() => {
-    wrapper = shallow(<App />, { disableLifecycleMethods: true });
-  });
-
-  test("Finds h1 tag", () => {
-    expect(wrapper.find("h1").text()).toContain("RB Cameras");
-  });
-
-  test("calls axios and returns images", () => {
-    const images = App("Canon");
-    console.log(images);
-  });
+  it("fetches successfully data from an API", async () => {});
 });

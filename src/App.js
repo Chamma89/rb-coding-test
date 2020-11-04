@@ -6,11 +6,11 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.css";
 
 function App() {
+  const [fetchingData, setFetchingData] = useState(true);
   const [imagesData, setImagesData] = useState({ works: [] });
+  const [noResultsFound, setNoResultsFound] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [fetchingData, setFetchingData] = useState(true);
-  const [noResultsFound, setNoResultsFound] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,6 +19,7 @@ function App() {
       });
 
       const result = queryResult.data.data;
+      console.log(result);
       setImagesData({ works: result.works });
       setFetchingData(false);
 
@@ -45,9 +46,11 @@ function App() {
         image.exif.make.toLowerCase().includes(searchTerm.toLocaleLowerCase())
     );
 
-    results.length == 0
-      ? setNoResultsFound("No results found")
-      : setNoResultsFound("");
+    if (!fetchingData) {
+      results.length == 0
+        ? setNoResultsFound("No results found")
+        : setNoResultsFound("");
+    }
 
     setSearchResults(results);
   }, [searchTerm, imagesData]);
@@ -65,7 +68,11 @@ function App() {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.currentTarget.value)}
       />
-      {fetchingData ? "Loading..." : <PhotosList photos={searchResults} />}
+      {fetchingData ? (
+        <p className="loading">Loading...</p>
+      ) : (
+        <PhotosList photos={searchResults} />
+      )}
       <h3>{noResultsFound}</h3>
     </div>
   );
